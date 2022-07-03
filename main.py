@@ -43,10 +43,6 @@ class Client(commands.Bot):
         last_message = message
         if message.author == self.user:
             return
-        # elif message.author.id == 845112547957800990:
-        #     await message.reply("Ok, Zane.")
-        # elif message.author.id == 767237676251611207:
-        #     await message.reply("Ok, Shiori.")
         
         if random.randint(1, 100) == 1:
             if message.author.id in [935932557013426176, 836065103982887002, 748609140896694394]:
