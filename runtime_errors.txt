@@ -1,0 +1,8 @@
+07/02/2022, 03:15 || Command raised an exception: TypeError: sequence item 0: expected str instance, Member found
+07/02/2022, 03:18 || Command raised an exception: TypeError: sequence item 0: expected str instance, Member found
+07/02/2022, 03:28 || You are on cooldown. Try again in 27.71s
+07/02/2022, 03:31 || You are on cooldown. Try again in 27.68s
+07/02/2022, 03:33 || You are on cooldown. Try again in 27.86s
+07/02/2022, 04:36 || Command raised an exception: AttributeError: 'list' object has no attribute 'kick'
+07/02/2022, 04:39 || Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+07/02/2022, 04:40 || Command raised an exception: TypeError: sequence item 0: expected str instance, Member found
