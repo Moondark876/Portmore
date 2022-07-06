@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.button import *
+import utils
 
 class Help(commands.Cog):
 
@@ -18,6 +18,8 @@ class Help(commands.Cog):
             embed = discord.Embed(title="Need Help?", description="Use `help [command]` to get help on a command, and `help [category]` to get help on a specific group of commands.", color=discord.Color.random())
             embed.set_author(name="Help", icon_url=self.bot.user.avatar.url)
             embed.set_footer(text=f"Bot made by Moondark876#4269")
+            await ctx.send(embed=embed)
+            return
         else:
             cog = self.bot.get_cog(entity.title())
             if cog:

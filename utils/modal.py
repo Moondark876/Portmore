@@ -1,13 +1,12 @@
 import discord
 from utils.button import Vote
 
-
 class Suggestion(discord.ui.Modal, title='Suggestion'):
 
     suggestion = discord.ui.TextInput(
         label='What would you like to suggest?',
         style=discord.TextStyle.long,
-        placeholder='Suggestion for the server and/or bot:'
+        placeholder='Suggestion:'
     )
 
     async def on_submit(self, interaction: discord.Interaction):

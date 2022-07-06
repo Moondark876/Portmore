@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-from utils.init import cluster
+from utils import cluster
 import random
-from utils.button import Confirm
+from utils import Confirm
 
 
 async def open_account(user: discord.Member):

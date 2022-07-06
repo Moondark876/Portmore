@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.button import *
+import utils
 
 
 class Admin(commands.Cog):
@@ -16,9 +16,12 @@ class Admin(commands.Cog):
     @commands.has_permissions(administrator=True)
     @commands.command(description="Bans a member from the server.", usage="ban [member] [reason]")
     async def ban(self, ctx, members: commands.Greedy[discord.Member], *, reason: str=None):
-        for member in members:
-            await member.ban(reason=reason)
-        embed = discord.Embed(title=f"Banned {', '.join(member for member in members)}", color=discord.Color.red(), description=f"Reason: {reason}")
+        if members is list:
+            for member in members:
+                await member.ban(reason=reason)
+        else:
+            await members.ban(reason=reason)
+        embed = discord.Embed(title=f"Banned {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
         await ctx.send(embed=embed)
 
     @commands.has_permissions(administrator=True)
@@ -29,7 +32,7 @@ class Admin(commands.Cog):
                 await member.kick(reason=reason)
         else:
             await members.kick(reason=reason)
-        embed = discord.Embed(title=f"Kicked {members is list and ', '.join(str(member) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
+        embed = discord.Embed(title=f"Kicked {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
         await ctx.send(embed=embed)
 
     @kick.error

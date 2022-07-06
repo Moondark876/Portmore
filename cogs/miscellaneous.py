@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.button import *
-from utils.modal import *
+import utils
 import random
 import time as t
 import datetime
@@ -30,7 +29,7 @@ class Misc(commands.Cog):
     async def invite(self, ctx):
         embed = discord.Embed(title="Add me right now enuh", color=discord.Color.green(),
         url="https://discord.com/api/oauth2/authorize?client_id=991016696322097196&permissions=8&scope=bot%20applications.commands")
-        await ctx.send(embed=embed, view=Link("https://discord.com/api/oauth2/authorize?client_id=991016696322097196&permissions=8&scope=bot%20applications.commands"))
+        await ctx.send(embed=embed, view=utils.Link("https://discord.com/api/oauth2/authorize?client_id=991016696322097196&permissions=8&scope=bot%20applications.commands"))
 
     @commands.command(description="Returns the bot's latency and uptime.", usage="ping")
     async def ping(self, ctx):
@@ -80,7 +79,7 @@ class Misc(commands.Cog):
     @app_commands.checks.cooldown(1, 20, key=lambda i: (i.guild_id, i.user.id))
     @app_commands.command(description="Takes a suggestion for this server and/or the bot!")
     async def suggest(self, interaction):
-        await interaction.response.send_modal(Suggestion())
+        await interaction.response.send_modal(utils.Suggestion())
 
     @commands.command(description="Command with a random usage, depending on what I am testing at the time you see it.", usage="test [members] [message]")
     async def test(self, ctx, members: commands.Greedy[discord.Member] = "no one", *, message: str = "nothing"):
