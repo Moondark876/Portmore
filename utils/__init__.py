@@ -1,3 +1,2 @@
-from utils.button import Vote, Link, Confirm, Next
-from utils.init import cluster
-from utils.modal import Suggestion
+from .button import Vote, Link, Confirm, Next, HelpView
+from .modal import Suggestion

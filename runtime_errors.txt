@@ -7,3 +7,9 @@
 07/02/2022, 04:39 || Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
 07/02/2022, 04:40 || Command raised an exception: TypeError: sequence item 0: expected str instance, Member found
 07/03/2022, 01:20 || Command raised an exception: TypeError: Paginate.__init__() takes 2 positional arguments but 3 were given
+07/08/2022, 04:17 || Command raised an exception: TypeError: object Embed can't be used in 'await' expression
+07/08/2022, 04:35 || Command raised an exception: TypeError: HelpView.__init__() takes 3 positional arguments but 4 were given
+07/08/2022, 04:37 || Command raised an exception: TypeError: HelpView.__init__() takes 3 positional arguments but 4 were given
+07/08/2022, 04:44 || Extension 'cogs.music' has no 'setup' function.
+07/08/2022, 04:44 || Extension 'cogs.music' has no 'setup' function.
+07/08/2022, 04:45 || Extension 'cogs.music' has no 'setup' function.

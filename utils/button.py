@@ -156,3 +156,29 @@ class Next(discord.ui.View):
         for child in self.children:
             child.disabled = True
         await interaction.response.edit_message(view=self)
+
+
+class HelpSelect(discord.ui.Select):
+    def __init__(self, author, bot):
+        self.author = author
+        self.bot = bot
+        cogs = [c for c in self.bot.cogs.keys()]
+        options = [discord.SelectOption(label=cog,
+                                        description=f"{str(cog.lower())} commands",
+                                        value=f"{cog.title()}") for cog in cogs]
+        super().__init__(placeholder='Select a category', min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        if interaction.user.id != self.author.id:
+            embed = discord.Embed(title="Yuh look dunce.", description="This is not yours.", color=discord.Colour.random())
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        embed = discord.Embed(title=f"{self.values[0]} Commands", color=discord.Colour.random(), description="\n".join(f"**{command}**" for command in self.bot.get_cog(self.values[0]).get_commands()))
+        embed.set_thumbnail(url=self.bot.user.avatar.url)
+        await interaction.response.edit_message(embed=embed)
+
+class HelpView(discord.ui.View):
+    def __init__(self, author, bot):
+        super().__init__()
+        self.author = author
+        self.bot = bot
+        self.add_item(HelpSelect(author, bot))

@@ -1,14 +1,13 @@
 import discord
 from discord.ext import commands
-from utils import cluster
 import random
 from utils import Confirm
 
 
-async def open_account(user: discord.Member):
+async def open_account(client: commands.Bot, user: discord.Member):
     try:
         post = {"_id": str(user.id), "Balance": 0}
-        await cluster.Botswag.Accounts.insert_one(post)
+        await client.cluster.Botswag.Accounts.insert_one(post)
     except:
         pass
 
@@ -24,8 +23,8 @@ class Economy(commands.Cog):
 
     @commands.command(aliases=["bal"])
     async def balance(self, ctx):
-        await open_account(ctx.author)
-        stats = await cluster.Botswag.Accounts.find_one({"_id": str(ctx.author.id)})
+        await open_account(self.bot, ctx.author)
+        stats = await self.bot.cluster.Botswag.Accounts.find_one({"_id": str(ctx.author.id)})
         embed = discord.Embed(description=f"You currently have ${stats['Balance']}.",
                               color=discord.Color.green())
         embed.set_author(name=f"{ctx.author.name.title()}'s Balance:", icon_url=ctx.author.display_avatar.url)
@@ -34,7 +33,7 @@ class Economy(commands.Cog):
     @commands.command(aliases=['swaggy', 'swagger'])
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def swag(self, ctx):
-        await open_account(ctx.author)
+        await open_account(self.bot, ctx.author)
 
         swagger = ["Your fans give you $* for being a swag master.",
                    "You swagged so hard you forgot to breathe, and they paid you $* to stay alive.",
@@ -42,7 +41,7 @@ class Economy(commands.Cog):
                    "opportunity to rob them all of a collective $*."]
         money = random.randint(100, 500)
 
-        await cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)}, {"$inc": {"Balance": money}})
+        await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)}, {"$inc": {"Balance": money}})
         embed = discord.Embed(description=random.choice(swagger).replace('*', str(money)),
                               color=discord.Color.green())
         embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -63,10 +62,10 @@ class Economy(commands.Cog):
         if view.value is None:
             view.stop()
         elif view.value:
-            await open_account(ctx.author)
-            await open_account(user)
+            await open_account(self.bot, ctx.author)
+            await open_account(self.bot, user)
 
-            stats = await cluster.Botswag.Accounts.find_one({"_id": str(ctx.author.id)})
+            stats = await self.bot.cluster.Botswag.Accounts.find_one({"_id": str(ctx.author.id)})
 
             if not amount.isnumeric() and amount.lower() not in ["all", 'half']:
                 embed = discord.Embed(title="Invalid `amount` Argument Given",
@@ -93,21 +92,21 @@ class Economy(commands.Cog):
                     return
                 else:
                     amount = int(amount)
-                    await cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
                                                               {"$inc": {"Balance": -amount}})
-                    await cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
 
             elif not amount.isnumeric():
                 if amount.lower() == 'all':
                     amount = stats['Balance']
-                    await cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
                                                               {"$inc": {"Balance": -amount}})
-                    await cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
                 elif amount.lower() == 'half':
                     amount = stats['Balance'] // 2
-                    await cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(ctx.author.id)},
                                                               {"$inc": {"Balance": -amount}})
-                    await cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
+                    await self.bot.cluster.Botswag.Accounts.update_one({"_id": str(user.id)}, {"$inc": {"Balance": amount}})
 
             embed = discord.Embed(title="Sharing is Caring",
                                   description=f"You gave **{user.name}** ${amount}!",

@@ -5,6 +5,9 @@ import random
 import os
 import dotenv
 import aiohttp
+import motor.motor_asyncio
+import asyncio
+import aiofiles
 
 dotenv.load_dotenv()
 
@@ -14,7 +17,6 @@ class Client(commands.Bot):
         super().__init__(command_prefix='-', intents=discord.Intents.all(), help_command=None, case_insensitive=True, activity=discord.Activity(type=discord.ActivityType.watching, name="yuh madda"))
 
     async def setup_hook(self):
-        self.session = aiohttp.ClientSession()
         print(f'Logged in as\n------\n{self.user.name}\n------')
         for cog in os.listdir('./cogs'):
             if cog.endswith('.py'):
@@ -22,9 +24,9 @@ class Client(commands.Bot):
                 try:
                     await self.load_extension(f'cogs.{name}')
                 except Exception as e:
-                    print(f'Failed to load cog {name}')
-                    with open("runtime_errors.txt", "a") as f:
-                        f.write(t.strftime("%m/%d/%Y, %I:%M") + " || " + str(e) + "\n")
+                    print(f'Failed to load cog {name}\n-----')
+                    async with aiofiles.open("runtime_errors.txt", "a") as f:
+                        await f.write(t.strftime("%m/%d/%Y, %I:%M") + " || " + str(e) + "\n")
         await self.tree.sync()
 
     
@@ -35,8 +37,8 @@ class Client(commands.Bot):
             embed = discord.Embed(title=f"**Error:** {error}", color=discord.Color.red())
             await ctx.send(embed=embed)
         else:
-            with open("runtime_errors.txt", "a") as f:
-                f.write(t.strftime("%m/%d/%Y, %I:%M") + " || " + str(error) + "\n")
+           async with aiofiles.open("runtime_errors.txt", "a") as f:
+                        await f.write(t.strftime("%m/%d/%Y, %I:%M") + " || " + str(error) + "\n")
 
     async def on_message(self, message):
         global last_message
@@ -59,5 +61,12 @@ class Client(commands.Bot):
         await self.process_commands(message)
 
 client = Client()
-client.run(os.getenv('TOKEN'))
+
+async def main():
+    async with client:
+        client.session = aiohttp.ClientSession()
+        client.cluster = motor.motor_asyncio.AsyncIOMotorClient(os.environ['MONGOKEY'])
+        await client.start(os.environ['TOKEN'])
+
+asyncio.run(main())
 
