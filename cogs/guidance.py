@@ -27,7 +27,10 @@ class Help(commands.Cog):
             else:
                 command = self.bot.get_command(entity.lower())
                 if command:
-                        embed = discord.Embed(title=f"`{command.usage or 'No Help Found'}`", color=discord.Color.random(), description=command.description or "Try again later.")
+                        embed: discord.Embed = discord.Embed(title=f"Help for {command.name.title()}", color=discord.Color.blue(), description=command.help)
+                        embed.add_field(name="Usage", value=f"`{ctx.prefix}{command.usage}`", inline=False)
+                        embed.add_field(name="Aliases", value=f"`[{'|'.join(command.aliases)}]`", inline=False)
+                        embed.set_footer(text=f"Requested by {ctx.author.name} | Not Implemented", icon_url=ctx.author.avatar.url)
                 else:
                     await ctx.send("`Category/Command` not found.")
                     return

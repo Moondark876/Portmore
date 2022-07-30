@@ -1,5 +1,5 @@
 import discord
-from utils.button import Vote
+from utils.buttons import Vote
 
 class Suggestion(discord.ui.Modal, title='Suggestion'):
 

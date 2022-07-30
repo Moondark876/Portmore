@@ -19,20 +19,22 @@ class Admin(commands.Cog):
         if members is list:
             for member in members:
                 await member.ban(reason=reason)
+                embed = discord.Embed(title=f"Banned {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
         else:
             await members.ban(reason=reason)
-        embed = discord.Embed(title=f"Banned {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
+            embed = discord.Embed(title=f"Banned {members.name}", color=discord.Color.red(), description=f"Reason: {reason}")
         await ctx.send(embed=embed)
 
     @commands.has_permissions(administrator=True)
     @commands.command(description="Kicks a member from the server.", usage="kick [members] [reason]")
     async def kick(self, ctx, members: commands.Greedy[discord.Member], *, reason: str=None):
-        if members is list:
+        if isinstance(members, list):
             for member in members:
                 await member.kick(reason=reason)
+            embed = discord.Embed(title=f"Kicked {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
         else:
             await members.kick(reason=reason)
-        embed = discord.Embed(title=f"Kicked {members is list and ', '.join(str(member.name) for member in members) or members}", color=discord.Color.red(), description=f"Reason: {reason}")
+            embed = discord.Embed(title=f"Kicked {members.name}", color=discord.Color.red(), description=f"Reason: {reason}")
         await ctx.send(embed=embed)
 
     @kick.error

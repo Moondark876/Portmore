@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands, menus
+from .selects import *
 
 
 class Vote(discord.ui.View):
@@ -12,7 +13,7 @@ class Vote(discord.ui.View):
         self.upvote_users = []
         self.downvote_users = []
 
-    @discord.ui.button(label="⬆️", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="⬆️", style=discord.ButtonStyle.green)
     async def upvote_callback(self, interaction, button):
         if interaction.user.id in self.upvote_users:
             return
@@ -25,7 +26,7 @@ class Vote(discord.ui.View):
         self.embed.set_field_at(index=1, name="Downvotes", value=self.downvotes)
         await interaction.response.edit_message(embed=self.embed, view=self)
 
-    @discord.ui.button(label="⬇️", style=discord.ButtonStyle.red)
+    @discord.ui.button(emoji="⬇️", style=discord.ButtonStyle.red)
     async def downvote_callback(self, interaction, button):
         if interaction.user.id in self.downvote_users:
             return
@@ -99,15 +100,12 @@ class Vote(discord.ui.View):
 #         await self.show_page(self._source.get_max_pages() - 1)
 #         await interaction.response.defer()
     
-class Link(discord.ui.View):
+class Link(discord.ui.Button):
 
-    def __init__(self, link):
-        super().__init__()
-        self.link = link
+    def __init__(self, name, link):
+        super().__init__(label=name, style=discord.ButtonStyle.link, url=link)
 
-        button = discord.ui.Button(label="Link", style=discord.ButtonStyle.link, url=self.link)
-        self.add_item(button)
-
+        
 class Confirm(discord.ui.View):
     def __init__(self):
         super().__init__()
@@ -158,27 +156,51 @@ class Next(discord.ui.View):
         await interaction.response.edit_message(view=self)
 
 
-class HelpSelect(discord.ui.Select):
-    def __init__(self, author, bot):
-        self.author = author
-        self.bot = bot
-        cogs = [c for c in self.bot.cogs.keys()]
-        options = [discord.SelectOption(label=cog,
-                                        description=f"{str(cog.lower())} commands",
-                                        value=f"{cog.title()}") for cog in cogs]
-        super().__init__(placeholder='Select a category', min_values=1, max_values=1, options=options)
-
-    async def callback(self, interaction: discord.Interaction):
-        if interaction.user.id != self.author.id:
-            embed = discord.Embed(title="Yuh look dunce.", description="This is not yours.", color=discord.Colour.random())
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-        embed = discord.Embed(title=f"{self.values[0]} Commands", color=discord.Colour.random(), description="\n".join(f"**{command}**" for command in self.bot.get_cog(self.values[0]).get_commands()))
-        embed.set_thumbnail(url=self.bot.user.avatar.url)
-        await interaction.response.edit_message(embed=embed)
-
 class HelpView(discord.ui.View):
     def __init__(self, author, bot):
         super().__init__()
-        self.author = author
-        self.bot = bot
         self.add_item(HelpSelect(author, bot))
+
+# class Tracks(discord.ui.View):
+#     def __init__(self, author, results):
+#         super().__init__()
+#         self.results = results
+#         self.current_page = 0
+#         self.author = author
+#         self.ids = [i for i, _, _ in self.results]
+#         self.button = discord.ui.Button(label="{}/{}".format(self.current_page+1, len(self.ids)))
+#         self.button.disabled = True
+#         self.add_item(self.button)
+
+#     async def interaction_check(self, interaction):
+#         return interaction.user == self.author
+
+#     @discord.ui.button(emoji='◀️', style=discord.ButtonStyle.blurple)
+#     async def previous_callback(self, interaction, button):
+#         if self.current_page > 0:
+#             self.current_page -= 1
+#             self.button.label = "{}/{}".format(self.current_page+1, len(self.ids))
+#             await interaction.response.edit_message(content=f"https://open.spotify.com/track/{self.ids[self.current_page]}", view=self)
+#         else:
+#             await interaction.response.send_message(content="You are on the first page.", ephemeral=True)
+#             await interaction.response.defer()
+
+#     @discord.ui.button(emoji='▶️', style=discord.ButtonStyle.blurple)
+#     async def forward_callback(self, interaction, button):
+#         if self.current_page < len(self.ids) - 1:
+#             self.current_page += 1
+#             self.button.label = "{}/{}".format(self.current_page+1, len(self.ids))
+#             await interaction.response.edit_message(content=f"https://open.spotify.com/track/{self.ids[self.current_page]}", view=self)
+#         else:
+#             await interaction.response.send_message(content="You are on the last page.", ephemeral=True)
+#             await interaction.response.defer()   
+
+class Tracks(discord.ui.View):
+    def __init__(self, author, results):
+        super().__init__()
+        self.add_item(TrackSelect(author, results))
+
+class PreView(discord.ui.View):
+    def __init__(self, author, results):
+        super().__init__()
+        self.add_item(PreviewSelect(author, results))

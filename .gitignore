@@ -1,4 +1,4 @@
 .env
-utils/
+init.py
 __pycache__/
 docs/
